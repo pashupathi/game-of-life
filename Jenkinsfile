@@ -57,10 +57,10 @@ node {
          	sh '/opt/maven/bin/mvn clean install -DskipTests -U' 
 	
     stage 'Test'
-		 stage 'mUnit' 
+		 step 'mUnit' 
 			// We have no regression tests yet
 			sh 'echo Test'
-		stage 'postman'
+		step 'Postman'
 			sh ' echo postman'
 			// need npm package - newman to run them
 			 
@@ -74,9 +74,10 @@ node {
 				}
 			} */
 	
-    stage 'Deploy'
+    /*stage 'Deploy'
       		echo 'Push to Artifactory Repo'
 		// Blue - Green deploy strategy needed
+		*/
      
     stage 'Cleanup'
         	deleteDir()
