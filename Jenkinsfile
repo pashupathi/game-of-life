@@ -17,8 +17,27 @@ def timeouts = [
 	regression: 1,
 	deploy: 2,
 ]
-def GITUSER = credentials('pashupathi')
-	
+def GITUSER = credentials('// Configurable values
+// -------------------
+
+// SonarQube Host URL
+def SONAR_HOST = 'http://sonarqube:9000'
+
+// Who is allowed to promote for a release? (comma separated, no blanks!)
+def RELEASE_PROMOTERS = 'pashupathi'
+
+// Timeouts how long the individual stages might take before they fail
+def timeouts = [
+	unit: 'MINUTES',
+	preparation: 2,
+	compile: 2,
+	munit: 5,
+	sonarcube: 5,
+	regression: 1,
+	deploy: 2,
+]
+def GITUSER = credentials('karthik')
+
 node {
 	
 	try {
@@ -29,7 +48,7 @@ node {
 
       		// Cleanup local checkout - TODO there should also be a dedicated jenkins command to invoke this action
     		deleteDir()
-		git branch: 'dev', credentialsId: 'pashupathi', url: 'https://pashupathi@github.com/pashupathi/game-of-life.git'
+		git branch: 'dev', credentialsId: 'karthik', url: 'https://github.com/pashupathi/game-of-life.git'
     		// Clone from git
     		checkout scm
     
@@ -44,9 +63,14 @@ node {
     		sh "/opt/maven/bin/mvn -B versions:set -DgenerateBackupPoms=false -DnewVersion=${v}"
 	
 		// Add the pom.xml files and create a commit+tag
+		sh "git config --global user.name 'pashupathi'"
     		sh 'git add .'
     		sh "git commit -m 'Raise version'"
-    		sh "git tag v${v}"
+		withCredentials([usernamePassword(credentialsId: 'pashupathi', passwordVariable: 'GITPASSWORD', usernameVariable: 'GITUSERNAME')]) {
+ 		   sh "git remote set-url origin https://github.com/pashupathi/game-of-life.git"	
+	           sh "git tag -a ${env.BUILD_TAG} -m 'jenkins'"
+		   sh "git remote set-url origin pashupathi@github.com/pashupathi/game-of-life.git"
+                }
 	
     stage 'Build'
          	sh '/opt/maven/bin/mvn clean install -DskipTests -U' 
@@ -103,4 +127,5 @@ node {
 def version() {
     	def matcher = readFile('pom.xml') =~ '<version>(.+)-.*</version>'
     	matcher ? matcher[0][1].tokenize(".") : null
-}
+}')
+
