@@ -56,11 +56,11 @@ node {
     stage 'Build'
          	sh '/opt/maven/bin/mvn clean install -DskipTests -U' 
 	
-    stage 'Test'
-		 step 'mUnit' 
+   
+    stage 'mUnit' 
 			// We have no regression tests yet
 			sh 'echo Test'
-		step 'Postman'
+    stage 'Postman'
 			sh ' echo postman'
 			// need npm package - newman to run them
 			 
