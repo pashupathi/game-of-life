@@ -17,7 +17,6 @@ def timeouts = [
 	regression: 1,
 	deploy: 2,
 ]
-def GITUSER = credentials('// Configurable values
 // -------------------
 
 // SonarQube Host URL
