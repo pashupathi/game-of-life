@@ -63,6 +63,7 @@ node {
     stage 'Postman'
 			sh ' echo postman'
 			// need npm package - newman to run them
+			sh 'newman run TestScenes.json'
 			 
     		
     stage 'SonarQube'
